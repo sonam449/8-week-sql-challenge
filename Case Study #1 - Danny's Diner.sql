@@ -1,5 +1,5 @@
 -- Below code is used for creating and updating the data in 3 tables (Sales, Members and Menu).
--- later on the 10 questions of this cases tudy is solved.
+-- later on the 10 questions of this cases study is solved.
 create database DannyDiner;
 CREATE TABLE sales (
   customer_id VARCHAR(1),
