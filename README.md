@@ -1,4 +1,4 @@
-# 8-week-sql-challenge
+# 8-week-sql-challenge #mysql
 This contains all the 8 cases of famous 8-week-sql-challenge by data with danny.
 
 One can find all the cases here - https://8weeksqlchallenge.com/
