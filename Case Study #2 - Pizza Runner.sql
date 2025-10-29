@@ -1,12 +1,15 @@
 -- This Part this creating 6 tables required for solving the problems statements. (runner_orders, runners, customers_orders, pizza_names, pizza_reciepes, pizza_toppings)
+-- creating and using pizza_runner database
 CREATE database pizza_runner;
 use pizza_runner;
 
+-- creating runners table
 DROP table if exists runners;
 CREATE TABLE    runners(
   runner_id INTEGER,
   registration_date DATE
 );
+-- inserting into runners table
 INSERT INTO runners
   (runner_id, registration_date )
 VALUES
@@ -15,8 +18,7 @@ VALUES
   (3, '2021-01-08'),
   (4, '2021-01-15');
 
-select * from runners;
-
+-- creating customer_orders table
 DROP TABLE IF EXISTS customer_orders;
 CREATE TABLE customer_orders (
    order_id  INTEGER,
@@ -26,7 +28,7 @@ CREATE TABLE customer_orders (
    extras  VARCHAR(4),
    order_time  TIMESTAMP
 );
-
+-- inserting into customer_orders table
 INSERT INTO customer_orders
   (order_id , customer_id, pizza_id, exclusions, extras, order_time )
 VALUES
@@ -46,6 +48,7 @@ VALUES
   ('10', '104', '1', '2, 6', '1, 4', '2020-01-11 18:34:49');
 
 
+-- creating runner_orders table
 DROP TABLE IF EXISTS runner_orders;
 CREATE TABLE runner_orders (
    order_id  INTEGER,
@@ -55,7 +58,7 @@ CREATE TABLE runner_orders (
    duration  VARCHAR(10),
    cancellation  VARCHAR(23)
 );
-
+-- inserting into runner_orders table
 INSERT INTO runner_orders
   (order_id , runner_id, pickup_time, distance, duration, cancellation )
 VALUES
@@ -71,11 +74,13 @@ VALUES
   ('10', '1', '2020-01-11 18:50:20', '10km', '10minutes', 'null');
 
 
+-- creating pizza_names table
 DROP TABLE IF EXISTS pizza_names;
 CREATE TABLE pizza_names (
    pizza_id  INTEGER,
    pizza_name  TEXT
 );
+-- inserting into pizza_names table
 INSERT INTO pizza_names
   (pizza_id , pizza_name)
 VALUES
@@ -83,23 +88,26 @@ VALUES
   (2, 'Vegetarian');
 
 
+-- creating pizza_recipes table
 DROP TABLE IF EXISTS pizza_recipes;
 CREATE TABLE pizza_recipes (
    pizza_id  INTEGER,
    toppings  TEXT
 );
+-- inserting into pizza_recipes table
 INSERT INTO pizza_recipes
   (pizza_id , toppings)
 VALUES
   (1, '1, 2, 3, 4, 5, 6, 8, 10'),
   (2, '4, 6, 7, 9, 11, 12');
 
-
+-- creating pizza_toppings table
 DROP TABLE IF EXISTS pizza_toppings;
 CREATE TABLE pizza_toppings (
    topping_id  INTEGER,
    topping_name  TEXT
 );
+-- inserting into pizza_toppings table
 INSERT INTO pizza_toppings
   (topping_id , topping_name )
 VALUES
@@ -116,7 +124,11 @@ VALUES
   (11, 'Tomatoes'),
   (12, 'Tomato Sauce');
 
--- data cleaning - some datatypes and null values of columns needs to be adjusted before doing any problem solving
+-- data cleaning and transformation - some datatypes and null values of columns needs to be changed before doing any problem solving
+
+
+
+
 
 
 -- Question starts from here
