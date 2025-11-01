@@ -124,6 +124,83 @@ VALUES
   (11, 'Tomatoes'),
   (12, 'Tomato Sauce');
 
+
+
+-- Section A. Pizza Metrics
+
+-- Q 1 - How many pizzas were ordered?
+select count(pizza_id) as total_pizza
+from customer_orders;
+
+-- q 2 - How many unique customer orders were made?
+select count(distinct(order_id)) as Unique_cust_orders
+from customer_orders;
+
+-- q3 -- How many successful orders were delivered by each runner?
+select runner_id, count(order_id) as Success_delivery
+from runner_orders
+WHERE duration <> 'null'
+group by runner_id
+order by runner_id;
+
+-- q4 -- How many of each type of pizza was delivered?
+select c.pizza_id, pn.pizza_name, count(c.pizza_id)
+from customer_orders c 
+join runner_orders r
+on c.order_id = r.order_id and r.duration<> 'null'
+join pizza_names pn 
+on pn.pizza_id = c.pizza_id
+group by c.pizza_id,pn.pizza_name ;
+
+-- q5 - How many Vegetarian and Meatlovers were ordered by each customer?
+select c.customer_id,c.pizza_id, count(c.pizza_id)
+from customer_orders c join pizza_names pn
+on c.pizza_id = pn.pizza_id
+group by c.customer_id, c.pizza_id;
+
+-- q6 - What was the maximum number of pizzas delivered in a single order?
+select c.order_id, count(c.pizza_id) 
+from customer_orders c
+join runner_orders ro on c.order_id = ro.order_id where ro.pickup_time <> 'null'
+group by c.order_id 
+order by count(c.pizza_id) desc
+limit 1;
+
+-- q7 -- For each customer, how many delivered pizzas had at least 1 change and how many had no changes?
+-- here we need 3 conditions for each column (null, 'null' and length(columnvalue))
+SELECT 
+  customer_id, 
+  SUM(CASE WHEN (exclusions IS NULL OR exclusions = 'null' OR TRIM(exclusions) = '') 
+       AND (extras IS NULL OR extras = 'null' OR TRIM(extras) = '') 
+      THEN 1 ELSE 0 END
+  ) AS NoChangeCount,
+  SUM(CASE WHEN (exclusions IS NOT NULL AND exclusions <> 'null' AND TRIM(exclusions) <> '') 
+       OR (extras IS NOT NULL AND extras <> 'null' AND TRIM(extras) <> '') 
+      THEN 1 ELSE 0 END
+  ) AS ChangeCount
+FROM customer_orders
+GROUP BY customer_id;
+
+
+-- q8 - How many pizzas were delivered that had both exclusions and extras?
+SELECT 
+SUM(case when (exclusions is NOT null AND (exclusions) <> 'null' AND length(exclusions)>0) and (extras is NOT null AND (extras) <> 'null' AND length(extras) > 0) then 1 end) as changecount
+FROM CUSTOMER_ORDERS;
+
+
+-- q9 - What was the total volume of pizzas ordered for each hour of the day?
+SELECT date(order_time) orderdate, hour(order_time) ordertime, 
+COUNT(order_id) totalOrder
+from customer_orders
+group by date(order_time), hour(order_time);
+
+-- q10 - What was the volume of orders for each day of the week?
+SELECT month(order_time), dayname(order_time), 
+COUNT(order_id) HourCount
+from customer_orders
+group by month(order_time), dayname(order_time);
+
+
 -- data cleaning and transformation - some datatypes and null values of columns needs to be changed before doing any problem solving
 
 
@@ -131,5 +208,5 @@ VALUES
 
 
 
--- Question starts from here
+
 
