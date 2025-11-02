@@ -1,5 +1,8 @@
 -- This Part this creating 6 tables required for solving the problems statements. (runner_orders, runners, customers_orders, pizza_names, pizza_reciepes, pizza_toppings)
+------------------------------------------------------------------
 -- creating and using pizza_runner database
+------------------------------------------------------------------
+
 CREATE database pizza_runner;
 use pizza_runner;
 
@@ -125,8 +128,9 @@ VALUES
   (12, 'Tomato Sauce');
 
 
-
+------------------------------------------------------------------
 -- Section A. Pizza Metrics
+------------------------------------------------------------------
 
 -- Q 1 - How many pizzas were ordered?
 select count(pizza_id) as total_pizza
@@ -199,6 +203,82 @@ SELECT month(order_time), dayname(order_time),
 COUNT(order_id) HourCount
 from customer_orders
 group by month(order_time), dayname(order_time);
+
+
+------------------------------------------------------------------
+-- B. Runner and Customer Experience
+------------------------------------------------------------------
+
+-- How many runners signed up for each 1 week period? (i.e. week starts 2021-01-01)
+select floor(datediff(registration_date, '2021-01-01')/7)+1 weeknumber, count(runner_id)
+from runners
+group by weeknumber;
+
+-- What was the average time in minutes it took for each runner to arrive at the Pizza Runner HQ to pickup the order?
+select runner_id, round(avg(CAST(trim(regexp_REPLACE(duration, '(minute|minutes|mins)', '')) AS DECIMAL(5,2))), 2) AS AvgdurationMIN
+from runner_orders
+WHERE duration IS NOT NULL
+group by runner_id;
+
+-- Is there any relationship between the number of pizzas and how long the order takes to prepare?
+select  pizzaCount, 
+		round(avg(time_to_sec(timediff( OrderPickUp , custOrderTime))/60), 2) avgtime
+from (
+		select c.order_id, 
+        cast(c.order_time as datetime) as custOrderTime, 
+		cast(r.pickup_time as datetime) as OrderPickUp, 
+        count(c.pizza_id) pizzaCount
+		from customer_orders c join runner_orders r
+		on c.order_id = r.order_id
+        WHERE r.pickup_time IS NOT NULL
+        group by c.order_id, c.order_time,r.pickup_time)x
+group by pizzaCount;
+
+
+-- What was the average distance travelled for each customer?
+select c.customer_id, round(avg(CAST(REPLACE(r.distance, 'km', '') AS DECIMAL(5,2))), 2)  AS AvgdistanceKM
+from customer_orders c join runner_orders r 
+on c.order_id = r.order_id
+where r.distance is not null
+group by c.customer_id;
+
+
+-- What was the difference between the longest and shortest delivery times for all orders?
+select concat((x.Maxdist - x.Mindist), 'mins') distdiffer
+from (select round(min(CAST(trim(REPLACE(r.distance, 'km', '')) AS DECIMAL(5,2))), 2) Mindist , 
+		round(max(CAST(trim(REPLACE(r.distance, 'km', '')) AS DECIMAL(5,2))), 2) Maxdist
+        from runner_orders r 
+         WHERE r.distance IS NOT NULL 
+    AND r.distance <> 'null'
+    AND r.distance <> '')x;
+
+
+-- What was the average speed for each runner for each delivery and do you notice any trend for these values?
+SELECT runner_id,
+ROUND((SUM(CASE WHEN duration IS NOT NULL THEN 1 ELSE 0 END) / COUNT(order_id)) * 100, 2) AS successful_delivery_percentage
+FROM runner_orders
+GROUP BY runner_id;
+
+------------------------------------------------------------------
+
+------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 -- data cleaning and transformation - some datatypes and null values of columns needs to be changed before doing any problem solving
