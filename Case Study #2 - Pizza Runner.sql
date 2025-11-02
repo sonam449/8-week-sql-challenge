@@ -188,7 +188,8 @@ GROUP BY customer_id;
 
 -- q8 - How many pizzas were delivered that had both exclusions and extras?
 SELECT 
-SUM(case when (exclusions is NOT null AND (exclusions) <> 'null' AND length(exclusions)>0) and (extras is NOT null AND (extras) <> 'null' AND length(extras) > 0) then 1 end) as changecount
+SUM(case when (exclusions is NOT null AND (exclusions) <> 'null' AND length(exclusions)>0) and (extras is NOT null AND (extras) <> 'null' 
+	AND length(extras) > 0) then 1 end) as changecount
 FROM CUSTOMER_ORDERS;
 
 
